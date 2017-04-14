@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.simbon.testapp1.WelcomeActivity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="226dp"
+        android:layout_height="238dp"
+        android:text="    欢迎您使用本应用，接下来的步骤将引导您对本应用进行相关设置，请确保您已连接上了自家的Wifi后再点击下一步，或者您也可以在本应用的主界面点击“重新配置”按钮来重新配置本应用。\n     本应用的主要功能是通过您的手机与家庭Wifi路由器的距离来判断您是否离开家，并在您将离开家时提醒您关闭家中无需待机的用电器与燃气阀门。以便于您在离家后可以通过本应用来检查您是否已经关闭这些设备，同时帮助您节约能源，避免浪费。"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.37" />
+
+    <Button
+        android:id="@+id/next_step"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="我已连接自家Wifi，下一步"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.857" />
+</android.support.constraint.ConstraintLayout>
