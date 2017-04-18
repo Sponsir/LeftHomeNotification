@@ -1,6 +1,8 @@
 package com.example.simbon.testapp1;
 
+import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +12,7 @@ import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 import java.util.LinkedList;
 
@@ -63,11 +66,24 @@ public class NotifyService extends Service {
                             int rssi = -wifiInfo.getRssi();
                             Log.d(TAG, "Rssi: " + rssi + " FrontRssiAVG: " + frontRssiAvg);
                             if (rssi > (MAX_THRESHOLD + MIN_THRESHOLD) / 2 && frontRssiAvg < MAX_THRESHOLD && frontRssiAvg < rssi) {
+                                Context context = getApplicationContext();
                                 NotificationManager notifyService = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                                 NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-                                builder.setContentTitle("Test Title")
-                                        .setContentText("Test Content")
-                                        .setSmallIcon(R.mipmap.ic_launcher);
+                                RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.notification);
+                                contentView.setImageViewResource(R.id.image, R.mipmap.ic_launcher);
+                                contentView.setTextViewText(R.id.title, "Custom Notification");
+                                contentView.setTextViewText(R.id.text, "This is a custom layout");
+                                contentView.setTextViewText(R.id.confirm, "Confirm");
+                                Intent confirmIntent = new Intent(context, WelcomeActivity.class);
+                                PendingIntent confirmPendingIntent = PendingIntent.getActivity(context, 0, confirmIntent, 0);
+                                contentView.setOnClickPendingIntent(R.id.confirm, confirmPendingIntent);
+                                Intent touchIntent = new Intent(context, MainActivity.class);
+                                PendingIntent touchPendingIntent = PendingIntent.getActivity(context, 0, touchIntent, 0);
+                                builder.setSmallIcon(R.mipmap.ic_launcher);
+                                builder.setCustomContentView(contentView);
+                                builder.setContentIntent(touchPendingIntent);
+                                builder.setDefaults(Notification.DEFAULT_ALL);
+                                builder.setAutoCancel(true);
                                 notifyService.notify(1, builder.build());
                             }
                         }
