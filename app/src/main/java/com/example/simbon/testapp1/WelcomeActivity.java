@@ -42,6 +42,8 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
                     Log.d(TAG, "Wifi enabled check is running");
 
                     WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+
+                    Log.d(TAG, "The current wifi is " + wifiInfo.getSSID());
                     if (wifiManager.isWifiEnabled()) {
                         if (wifiInfo.getSSID() == "<unknown ssid>") {
                             nextStep.setEnabled(false);
