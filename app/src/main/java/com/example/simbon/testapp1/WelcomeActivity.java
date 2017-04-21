@@ -19,9 +19,8 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     public final String TAG = "WelcomeActivity";
     private WifiManager wifiManager;
     private Button nextStep;
-//    private Timer timer;
-//    private Handler handler;
-    private boolean stopThread = false;
+    private Timer timer;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,35 +33,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         nextStep = (Button)findViewById(R.id.next_step);
         nextStep.setOnClickListener(this);
 
-        // Start a thread to check if wifi is enabled
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (!stopThread) {
-                    Log.d(TAG, "Wifi enabled check is running");
-
-                    WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-
-                    Log.d(TAG, "The current wifi is " + wifiInfo.getSSID());
-                    if (wifiManager.isWifiEnabled()) {
-                        if (wifiInfo.getSSID() == "<unknown ssid>") {
-                            nextStep.setEnabled(false);
-                            nextStep.setText("请连接WIFI后进行下一步");
-                        }
-                        else {
-                            nextStep.setEnabled(true);
-                            nextStep.setText("我已连接自家Wifi，下一步");
-                        }
-                    }
-                    else {
-                        nextStep.setEnabled(false);
-                        nextStep.setText("请打开WIFI后进行下一步");
-                    }
-                }
-            }
-        });
-
-/*
+        timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -104,7 +75,6 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
                 }
             }
         };
-        */
     }
 
     @Override
@@ -112,8 +82,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         switch (v.getId()) {
             case R.id.next_step:
                 Log.d(TAG, "next_step clicked");
-                stopThread = true;
-//                timer.cancel();
+                timer.cancel();
                 Intent newActivity = new Intent(WelcomeActivity.this, SettingActivity.class);
                 startActivity(newActivity);
                 break;
