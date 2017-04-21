@@ -31,6 +31,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     Timer timer;
+    Handler handler;
     ProgressDialog dialog;
     int progress;
     int maxRssi;
@@ -40,7 +41,6 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     int doorMax;
     int doorMin;
     String doorWifiName;
-    Handler handler;
 
     @Override
     public void onClick(View v) {

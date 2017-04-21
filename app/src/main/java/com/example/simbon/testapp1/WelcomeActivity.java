@@ -17,6 +17,7 @@ import java.util.TimerTask;
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
     public static final String TAG = "WelcomeActivity";
+
     private WifiManager wifiManager;
     private Button nextStep;
     private Timer timer;
@@ -27,12 +28,13 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        Context context = getApplicationContext();
-        wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
-
         nextStep = (Button)findViewById(R.id.next_step);
         nextStep.setOnClickListener(this);
 
+        Context context = getApplicationContext();
+        wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+
+        // Create a thread to check if the wifi has been open and connected to a network, otherwise set the next button disable
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -78,11 +80,21 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Make sure that other threads can be closed
+        timer.cancel();
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.next_step:
                 Log.d(TAG, "next_step clicked");
+                // Stop the thread
                 timer.cancel();
+
+                // Jump to Setting activity
                 Intent newActivity = new Intent(WelcomeActivity.this, SettingActivity.class);
                 startActivity(newActivity);
                 break;

@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
+        // Create a thread to show the status of user
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -98,17 +99,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // If this activity was destroyed, free it's thread
+        timer.cancel();
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.clear_config:
                 Log.d(TAG, "clear_config clicked");
+                // Stop the service
                 Intent stopIntent = new Intent(this, NotifyService.class);
                 stopService(stopIntent);
+
+                // Clear the information saved before
                 Context context = getApplicationContext();
                 SharedPreferences sharedPreferences = context.getSharedPreferences("wifi_name", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.commit();
+
+                // Stop the thread used to show the status of user
+                timer.cancel();
+
+                // Jump to Welcome activity
                 Intent newActivity = new Intent(MainActivity.this, WelcomeActivity.class);
                 startActivity(newActivity);
                 break;
