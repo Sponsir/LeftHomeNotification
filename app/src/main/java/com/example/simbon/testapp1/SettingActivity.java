@@ -19,7 +19,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class SettingActivity extends AppCompatActivity implements View.OnClickListener {
-    public final String TAG = "SettingActivity";
+    public static final String TAG = "SettingActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -14,16 +14,17 @@ import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import java.util.LinkedList;
-
 /**
  * Created by Simbon on 2017/3/22.
  */
 
 public class NotifyService extends Service {
     public static final String TAG = "NotifyService";
+
+    public static boolean isCloseEquipments = false;
+    public static boolean isInHouse = false;
+
     private WifiManager wifiManager;
-    private LinkedList<Integer> frontRssi;
     private Context context;
     private boolean stopService = false;
 
@@ -36,8 +37,6 @@ public class NotifyService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand() was called");
-
-        frontRssi = new LinkedList<>();
 
         // Get the wifi's name and thresholds saved before
         context = getApplicationContext();
@@ -56,55 +55,52 @@ public class NotifyService extends Service {
                     WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                     // If the user is not in the range, do noting
                     if (wifiInfo.getSSID().equals(WIFI_NAME)) {
-                        if (frontRssi.size() >= 5) {
-                            int frontRssiAvg = 0;
-                            int sum = 0;
-                            for (int e : frontRssi) {
-                                sum += e;
-                            }
-                            frontRssiAvg = sum / frontRssi.size();
 
                             int rssi = -wifiInfo.getRssi();
 //                            Log.d(TAG, "Rssi: " + rssi + " FrontRssiAVG: " + frontRssiAvg);
-                            // If RSSI is larger than the average value of thresholds, which means that user is out of home.
-                            // And if the average value of front 5 RSSIs is less than max threshold, which means that user is go from home.
-                            // And if the average value of front 5 RSSIs is less than RSSI, which is aimed to avoid user stand in the range
-                            // between average threshold and max threshold.
-                            if (rssi > (MAX_THRESHOLD + MIN_THRESHOLD) / 2 && frontRssiAvg < MAX_THRESHOLD && frontRssiAvg < rssi) {
-                                // Initialize the custom notification
-                                Context context = getApplicationContext();
-                                NotificationManager notifyService = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                                NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-                                RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.notification);
-                                contentView.setImageViewResource(R.id.image, R.mipmap.ic_launcher);
-                                contentView.setTextViewText(R.id.title, "Custom Notification");
-                                contentView.setTextViewText(R.id.text, "This is a custom layout");
-                                contentView.setTextViewText(R.id.confirm, "Confirm");
-
-                                // Set the action when confirm button was clicked
-                                Intent confirmIntent = new Intent(context, EquipmentClosed.class);
-                                PendingIntent confirmPendingIntent = PendingIntent.getActivity(context, 0, confirmIntent, 0);
-                                contentView.setOnClickPendingIntent(R.id.confirm, confirmPendingIntent);
-                                // Set the action when notification was touched
-                                Intent touchIntent = new Intent(context, MainActivity.class);
-                                PendingIntent touchPendingIntent = PendingIntent.getActivity(context, 0, touchIntent, 0);
-
-                                builder.setSmallIcon(R.mipmap.ic_launcher);
-                                builder.setCustomContentView(contentView);
-                                builder.setContentIntent(touchPendingIntent);
-                                builder.setDefaults(Notification.DEFAULT_ALL);
-                                builder.setAutoCancel(true);
-                                notifyService.notify(1, builder.build());
+                            // RSSI is larger than the average value of thresholds, which means that user is out of home.
+                            // And the isInHouse is true, which means that user is going from house to outside
+                            if (rssi > (MAX_THRESHOLD + MIN_THRESHOLD) / 2 && isInHouse) {
+                                sendNotification();
+                                isInHouse = false;
+                            }
+                            if (rssi <= (MAX_THRESHOLD + MIN_THRESHOLD) / 2) {
+                                isInHouse = true;
+                                isCloseEquipments = false;
                             }
                         }
-                        frontRssi.add(-wifiInfo.getRssi());
-                        if (frontRssi.size() > 5) frontRssi.remove();
-                    }
                 }
             }
         }).start();
 
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    public void sendNotification() {
+        // Initialize the custom notification
+        Context context = getApplicationContext();
+        NotificationManager notifyService = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.notification);
+        contentView.setImageViewResource(R.id.image, R.mipmap.ic_launcher);
+        contentView.setTextViewText(R.id.title, "Custom Notification");
+        contentView.setTextViewText(R.id.text, "This is a custom layout");
+        contentView.setTextViewText(R.id.confirm, "Confirm");
+
+        // Set the action when confirm button was clicked
+        Intent confirmIntent = new Intent(context, EquipmentsClosed.class);
+        PendingIntent confirmPendingIntent = PendingIntent.getActivity(context, 0, confirmIntent, 0);
+        contentView.setOnClickPendingIntent(R.id.confirm, confirmPendingIntent);
+        // Set the action when notification was touched
+        Intent touchIntent = new Intent(context, MainActivity.class);
+        PendingIntent touchPendingIntent = PendingIntent.getActivity(context, 0, touchIntent, 0);
+
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setCustomContentView(contentView);
+        builder.setContentIntent(touchPendingIntent);
+        builder.setDefaults(Notification.DEFAULT_ALL);
+        builder.setAutoCancel(true);
+        notifyService.notify(1, builder.build());
     }
 
     @Override

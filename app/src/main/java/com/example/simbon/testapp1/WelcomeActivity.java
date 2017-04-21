@@ -16,7 +16,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
-    public final String TAG = "WelcomeActivity";
+    public static final String TAG = "WelcomeActivity";
     private WifiManager wifiManager;
     private Button nextStep;
     private Timer timer;

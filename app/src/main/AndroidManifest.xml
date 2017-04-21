@@ -24,7 +24,8 @@
         <service android:name=".NotifyService" />
 
         <activity android:name=".WelcomeActivity" />
-        <activity android:name=".SettingActivity"></activity>
+        <activity android:name=".SettingActivity" />
+        <activity android:name=".EquipmentsClosed" />
     </application>
 
 </manifest>
