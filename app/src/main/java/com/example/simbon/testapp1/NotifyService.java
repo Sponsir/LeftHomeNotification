@@ -65,7 +65,12 @@ public class NotifyService extends Service {
                         if (wifiInfo.getSSID().equals(WIFI_NAME)) {
                             int rssi = -wifiInfo.getRssi();
                             Log.d(TAG, "Rssi: " + rssi + " FrontRssiAVG: " + frontRssiAvg);
+                            // If RSSI is larger than the average value of thresholds, which means that user is out of home.
+                            // And if the average value of front 5 RSSIs is less than max threshold, which means that user is go from home.
+                            // And if the average value of front 5 RSSIs is less than RSSI, which is aimed to avoid user stand in the range
+                            // between average threshold and max threshold.
                             if (rssi > (MAX_THRESHOLD + MIN_THRESHOLD) / 2 && frontRssiAvg < MAX_THRESHOLD && frontRssiAvg < rssi) {
+                                // Initialize the custom notification
                                 Context context = getApplicationContext();
                                 NotificationManager notifyService = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                                 NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
@@ -74,11 +79,15 @@ public class NotifyService extends Service {
                                 contentView.setTextViewText(R.id.title, "Custom Notification");
                                 contentView.setTextViewText(R.id.text, "This is a custom layout");
                                 contentView.setTextViewText(R.id.confirm, "Confirm");
-                                Intent confirmIntent = new Intent(context, WelcomeActivity.class);
+
+                                // Set the action when confirm button was clicked
+                                Intent confirmIntent = new Intent(context, EquipmentClosed.class);
                                 PendingIntent confirmPendingIntent = PendingIntent.getActivity(context, 0, confirmIntent, 0);
                                 contentView.setOnClickPendingIntent(R.id.confirm, confirmPendingIntent);
+                                // Set the action when notification was touched
                                 Intent touchIntent = new Intent(context, MainActivity.class);
                                 PendingIntent touchPendingIntent = PendingIntent.getActivity(context, 0, touchIntent, 0);
+
                                 builder.setSmallIcon(R.mipmap.ic_launcher);
                                 builder.setCustomContentView(contentView);
                                 builder.setContentIntent(touchPendingIntent);
