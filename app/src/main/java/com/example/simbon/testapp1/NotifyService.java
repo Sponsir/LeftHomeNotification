@@ -54,17 +54,18 @@ public class NotifyService extends Service {
             public void run() {
                 while (!stopService) {
                     WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                    if (frontRssi.size() >= 5) {
-                        int frontRssiAvg = 0;
-                        int sum = 0;
-                        for (int e : frontRssi) {
-                            sum += e;
-                        }
-                        frontRssiAvg = sum / frontRssi.size();
+                    // If the user is not in the range, do noting
+                    if (wifiInfo.getSSID().equals(WIFI_NAME)) {
+                        if (frontRssi.size() >= 5) {
+                            int frontRssiAvg = 0;
+                            int sum = 0;
+                            for (int e : frontRssi) {
+                                sum += e;
+                            }
+                            frontRssiAvg = sum / frontRssi.size();
 
-                        if (wifiInfo.getSSID().equals(WIFI_NAME)) {
                             int rssi = -wifiInfo.getRssi();
-                            Log.d(TAG, "Rssi: " + rssi + " FrontRssiAVG: " + frontRssiAvg);
+//                            Log.d(TAG, "Rssi: " + rssi + " FrontRssiAVG: " + frontRssiAvg);
                             // If RSSI is larger than the average value of thresholds, which means that user is out of home.
                             // And if the average value of front 5 RSSIs is less than max threshold, which means that user is go from home.
                             // And if the average value of front 5 RSSIs is less than RSSI, which is aimed to avoid user stand in the range
@@ -96,9 +97,9 @@ public class NotifyService extends Service {
                                 notifyService.notify(1, builder.build());
                             }
                         }
+                        frontRssi.add(-wifiInfo.getRssi());
+                        if (frontRssi.size() > 5) frontRssi.remove();
                     }
-                    frontRssi.add(-wifiInfo.getRssi());
-                    if (frontRssi.size() > 5) frontRssi.remove();
                 }
             }
         }).start();
