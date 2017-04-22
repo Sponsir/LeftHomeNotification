@@ -1,4 +1,4 @@
-package com.example.simbon.testapp1;
+package com.example.simbon.lefthomenotification;
 
 import android.app.Activity;
 import android.os.Bundle;

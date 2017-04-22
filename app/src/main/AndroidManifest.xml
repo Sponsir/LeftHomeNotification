@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.simbon.testapp1">
+    package="com.example.simbon.lefthomenotification">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -13,7 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name="com.example.simbon.lefthomenotification.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,11 +21,11 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".NotifyService" />
+        <service android:name="com.example.simbon.lefthomenotification.NotifyService" />
 
-        <activity android:name=".WelcomeActivity" />
-        <activity android:name=".SettingActivity" />
-        <activity android:name=".EquipmentsClosed" />
+        <activity android:name="com.example.simbon.lefthomenotification.WelcomeActivity" />
+        <activity android:name="com.example.simbon.lefthomenotification.SettingActivity" />
+        <activity android:name="com.example.simbon.lefthomenotification.EquipmentsClosed" />
     </application>
 
 </manifest>
