@@ -77,14 +77,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void run() {
                 Message msg = new Message();
                 if (NotifyService.isInHouse) {
-                    msg.obj = "You are now in home";
+                    msg.obj = "您现在正在家中";
                 }
                 else {
                     if (NotifyService.isCloseEquipments) {
-                        msg.obj = "You left home with equipments closed";
+                        msg.obj = "您已关闭闲置用电器与燃气阀门";
                     }
                     else {
-                        msg.obj = "You left home without equipments closed";
+                        msg.obj = "您还没有关闭闲置用电器与燃气阀门";
                     }
                 }
                 handler.sendMessage(msg);

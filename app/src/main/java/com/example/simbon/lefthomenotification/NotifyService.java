@@ -64,9 +64,13 @@ public class NotifyService extends Service {
                                 sendNotification();
                                 isInHouse = false;
                             }
+                            // If user is in home
                             if (rssi <= (MAX_THRESHOLD + MIN_THRESHOLD) / 2) {
                                 isInHouse = true;
                                 isCloseEquipments = false;
+
+                                NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                                notificationManager.cancel(1);
                             }
                         }
                 }
@@ -83,9 +87,11 @@ public class NotifyService extends Service {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.notification);
         contentView.setImageViewResource(R.id.image, R.mipmap.ic_launcher);
-        contentView.setTextViewText(R.id.title, "Custom Notification");
-        contentView.setTextViewText(R.id.text, "This is a custom layout");
-        contentView.setTextViewText(R.id.confirm, "Confirm");
+        contentView.setTextViewText(R.id.title, "请关闭闲置用电器与燃气阀门");
+        contentView.setTextViewText(R.id.text, "若已关闭请点击右侧按钮");
+        contentView.setTextViewText(R.id.confirm, "我已关闭");
+
+//        contentView.setBoolean(R.id.confirm, "setEnable", false);
 
         // Set the action when confirm button was clicked
         Intent confirmIntent = new Intent(context, EquipmentsClosed.class);

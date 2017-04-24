@@ -1,6 +1,9 @@
 package com.example.simbon.lefthomenotification;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -18,6 +21,9 @@ public class EquipmentsClosed extends Activity {
         Log.d(TAG, "Confirm button has clicked");
         // If the confirm button on the notification was clicked
         NotifyService.isCloseEquipments = true;
+
+        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(1);
         finish();
     }
 }
