@@ -108,24 +108,18 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                                 Log.d(TAG, "Please make sure that you are using a same wifi in your house");
                             }
                             Context context = getApplicationContext();
-                            SharedPreferences sharedPreferences = context.getSharedPreferences("wifi_name", Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putString("wifi_name", wifiName);
+                            ConfigureSave configureSave = new ConfigureSave(context);
 
                             // Save the lower rssi into the configuration file. Note that the higher rssi's absolute value , the lower wifi level
-                            if (doorMax < maxRssi){
-                                editor.putInt("max_threshold", maxRssi);
+                            if (doorMax > maxRssi){
+                                maxRssi = doorMax;
                             }
-                            else {
-                                editor.putInt("max_threshold", doorMax);
+                            if (doorMin > minRssi) {
+                                minRssi = doorMin;
                             }
-                            if (doorMin < minRssi) {
-                                editor.putInt("min_threshold", minRssi);
-                            }
-                            else {
-                                editor.putInt("min_threshold", doorMin);
-                            }
-                            editor.commit();
+
+                            configureSave.saveWifiNameAndRssi(wifiName, maxRssi, minRssi);
+
                             Intent newActivity = new Intent(SettingActivity.this, MainActivity.class);
                             startActivity(newActivity);
                         }

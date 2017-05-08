@@ -3,6 +3,7 @@ package com.example.simbon.lefthomenotification;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -48,12 +49,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (!serviceExist) {
             // First launching check
             Context context = getApplicationContext();
-            SharedPreferences sharedPreferences = context.getSharedPreferences("wifi_name", Context.MODE_PRIVATE);
-            String wifiName = sharedPreferences.getString("wifi_name", null);
-            int maxThreshold = sharedPreferences.getInt("max_threshold", Integer.MIN_VALUE);
-            int minThreshold = sharedPreferences.getInt("min_threshold", Integer.MIN_VALUE);
-            Log.d(TAG, "Wifi name is: " + wifiName + "Max threshold is: " + maxThreshold + "Min threshold is: " + minThreshold);
-            if (wifiName == null || maxThreshold < 0 || minThreshold < 0) {
+            ConfigureSave configureSave = new ConfigureSave(context);
+
+            if (configureSave.isFirstLaunch()) {
                 // First launching
                 Log.d(TAG, "It's the first time to launch the app");
 
@@ -116,10 +114,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 // Clear the information saved before
                 Context context = getApplicationContext();
-                SharedPreferences sharedPreferences = context.getSharedPreferences("wifi_name", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.clear();
-                editor.commit();
+                ConfigureSave configureSave = new ConfigureSave(context);
+                configureSave.clearConfiguration();
 
                 // Stop the thread used to show the status of user
                 timer.cancel();
